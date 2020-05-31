@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# init
+tmux new-session -s scripts -d -n shell -c "$HOME/Programming/Scripts/shell"
+tmux new-window -t scripts:2 -n skhd -c "$HOME/Programming/Scripts/skhd"
+tmux new-window -t scripts:3 -n tmux -c "$HOME/Programming/Scripts/tmux"
+tmux new-window -t scripts:4 -n bitbar -c "$HOME/Programming/Scripts/BitBarPlugins"
+
+# window shell
+cd "$HOME/Programming/Scripts/shell"
+tmux split-window -t scripts:1.1 -h
+tmux split-window -t scripts:1.2 -v
+# window skdh
+cd "$HOME/Programming/Scripts/skhd"
+tmux split-window -t scripts:2.1 -h
+# window tmux
+cd "$HOME/Programming/Scripts/tmux"
+tmux split-window -t scripts:3.1 -h
+# window bitbar
+cd "$HOME/Programming/Scripts/BitBarPlugins"
+tmux split-window -t scripts:4.1 -h
+
+# reset window
+tmux select-pane -t scripts:1.1
+tmux select-pane -t scripts:2.1
+tmux select-pane -t scripts:3.1
+tmux select-pane -t scripts:4.1
+tmux select-window -t scripts:1
