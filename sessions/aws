@@ -2,7 +2,7 @@
 
 # init
 tmux new-session -s aws -d -n fzfaws -c "$HOME/Programming/aws/fzf.aws"
-tmux new-window -t aws:2 -n cloudformation -c "$HOME/Programming/aws/cloudformationstacks"
+tmux new-window -t aws:2 -n cloudformation -c "$HOME/Programming/aws/cloudformation"
 tmux new-window -t aws:3 -n lambda -c "$HOME/Programming/aws/lambda"
 
 # window fzfaws
