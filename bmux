@@ -20,7 +20,7 @@ sessions=()
 esc=$(printf '\033')
 while IFS= read -r line; do
   if grep "${line}" <(tmux list-sessions 2>/dev/null | awk -F ':' '{print $1}') &>/dev/null; then
-    sessions+=("+ ${esc}[32m${line}${esc}[m")
+    sessions+=("+ ${esc}[35m${line}${esc}[m")
   else
     sessions+=("- ${esc}[37m${line}${esc}[m")
   fi
@@ -29,7 +29,7 @@ done < <(find -s "${mydir}"/sessions -type f -print0 | xargs -0 -I __ basename _
 [[ "${session_type}" == 'all' ]] && \
   while IFS= read -r line; do
     [[ ! "${sessions[*]}" =~ ${line} ]] && \
-      sessions+=("+ ${esc}[34m${line}${esc}[m")
+      sessions+=("+ ${esc}[33m${line}${esc}[m")
   done < <(tmux list-sessions 2>/dev/null | awk -F ':' '{print $1}')
 
 selected_sessions=$(
