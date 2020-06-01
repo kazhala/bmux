@@ -1,17 +1,17 @@
 #!/bin/sh
 
 # init
-tmux new-session -s mealternative -d -n frontend -c "$HOME/Programming/WebDev/mealternative-full-stack/mealternative"
-tmux new-window -t mealternative:2 -n backend -c "$HOME/Programming/WebDev/mealternative-full-stack/backend-mealternative"
+tmux new-session -s mealternative -d -n frontend -c "$HOME/Programming/web/mealternative-full-stack/mealternative"
+tmux new-window -t mealternative:2 -n backend -c "$HOME/Programming/web/mealternative-full-stack/backend-mealternative"
 
 # window frontend
-cd "$HOME/Programming/WebDev/mealternative-full-stack/mealternative"
+cd "$HOME/Programming/web/mealternative-full-stack/mealternative"
 tmux split-window -t mealternative:1.1 -h
 tmux split-window -t mealternative:1.2 -v
 tmux select-layout -t mealternative:1.1 "$BMUX_3_WEB"
 
 # window bakcend
-cd "$HOME/Programming/WebDev/mealternative-full-stack/backend-mealternative"
+cd "$HOME/Programming/web/mealternative-full-stack/backend-mealternative"
 tmux split-window -t mealternative:2.1 -h
 tmux split-window -t mealternative:2.2 -v
 tmux select-layout -t mealternative:2.1 "$BMUX_3_WEB"

@@ -1,23 +1,23 @@
 #!/bin/sh
 
 # init
-tmux new-session -s scripts -d -n shell -c "$HOME/Programming/Scripts/shell"
-tmux new-window -t scripts:2 -n skhd -c "$HOME/Programming/Scripts/skhd"
-tmux new-window -t scripts:3 -n tmux -c "$HOME/Programming/Scripts/tmux"
-tmux new-window -t scripts:4 -n bitbar -c "$HOME/Programming/Scripts/BitBarPlugins"
+tmux new-session -s scripts -d -n shell -c "$HOME/Programming/scripts/shell"
+tmux new-window -t scripts:2 -n skhd -c "$HOME/Programming/scripts/skhd"
+tmux new-window -t scripts:3 -n tmux -c "$HOME/Programming/scripts/tmux"
+tmux new-window -t scripts:4 -n bitbar -c "$HOME/Programming/scripts/BitBarPlugins"
 
 # window shell
-cd "$HOME/Programming/Scripts/shell"
+cd "$HOME/Programming/scripts/shell"
 tmux split-window -t scripts:1.1 -h
 tmux split-window -t scripts:1.2 -v
 # window skdh
-cd "$HOME/Programming/Scripts/skhd"
+cd "$HOME/Programming/scripts/skhd"
 tmux split-window -t scripts:2.1 -h
 # window tmux
-cd "$HOME/Programming/Scripts/tmux"
+cd "$HOME/Programming/scripts/tmux"
 tmux split-window -t scripts:3.1 -h
 # window bitbar
-cd "$HOME/Programming/Scripts/BitBarPlugins"
+cd "$HOME/Programming/scripts/BitBarPlugins"
 tmux split-window -t scripts:4.1 -h
 
 # reset window
