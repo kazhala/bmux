@@ -10,7 +10,7 @@ tmux split-window -t mealternative:1.1 -h
 tmux split-window -t mealternative:1.2 -v
 tmux select-layout -t mealternative:1.1 "$BMUX_3_WEB"
 
-# window bakcend
+# window backend
 cd "$HOME/Programming/web/mealternative-full-stack/backend-mealternative"
 tmux split-window -t mealternative:2.1 -h
 tmux split-window -t mealternative:2.2 -v
