@@ -3,7 +3,7 @@
 # init
 tmux new-session -s shell -d -n dotbare -c "$HOME/Programming/shell/dotbare"
 tmux new-window -t shell:2 -n bmux -c "$HOME/Programming/shell/bmux"
-tmux new-window -t shell:3 -n bmux -c "$HOME/Programming/shell/trash"
+tmux new-window -t shell:3 -n trash -c "$HOME/Programming/shell/trash"
 
 # window dotbare
 cd "$HOME/Programming/shell/dotbare"
