@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mydir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BMUX_DIR="${BMUX_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}}/bmux"
 
 session_type="bmux"
 
@@ -24,7 +24,7 @@ while IFS= read -r line; do
   else
     sessions+=("- ${esc}[37m${line}${esc}[m")
   fi
-done < <(find -s "${mydir}"/sessions -type f -print0 | xargs -0 -I __ basename __ .yml)
+done < <(find -s "${BMUX_DIR}" -type f -print0 | xargs -0 -I __ basename __ .yml)
 
 [[ "${session_type}" == 'all' ]] && \
   while IFS= read -r line; do
@@ -46,10 +46,10 @@ selected_sessions=$(echo "${selected_sessions}" | sed 1d)
 read -r session_status session_name <<< $(echo "${selected_sessions}" | awk '{print $1 " " $2}')
 
 if [[ -n "${key}" && "${key}" == 'ctrl-e' ]]; then
-  exec nvim "${mydir}/sessions/${session_name}"
+  exec nvim "${BMUX_DIR}/${session_name}"
 fi
 
-[[ "${session_status}" == '-' ]] && "${mydir}"/sessions/"${session_name}"
+[[ "${session_status}" == '-' ]] && "${BMUX_DIR}"/"${session_name}"
 
 tmux switch-client -t "${session_name}" 2>/dev/null || \
   tmux attach -t "${session_name}"
