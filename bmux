@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BMUX_DIR="${BMUX_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}}/bmux"
+BMUX_DIR="${BMUX_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/bmux}"
 
 session_type="bmux"
 
