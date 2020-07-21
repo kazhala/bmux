@@ -4,13 +4,55 @@ BMUX_DIR="${BMUX_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/bmux}"
 
 session_type="bmux"
 
-while getopts ":a" opt; do
-  case "$opt" in
-    a)
+function usage() {
+  echo -e "usage: bmux [-h] [-a] ...
+
+A minimulistic tmux session manager.
+
+optional arguments:
+  -h, --help\t\tshow this help message and exit
+  -a, --all\t\tdisplay all sessions including not managed new sessions"
+}
+
+#######################################
+# handle key press
+# Arguments:
+#   $1: the key binds pressed
+#   $2: selected session information
+#######################################
+function handle_key() {
+  local key="$1"
+  local session_name="$2"
+  case "${key}" in
+    ctrl-e)
+      exec nvim "${BMUX_DIR}/${session_name}"
+      ;;
+    ctrl-d)
+      exec tmux kill-session -t "${session_name}" 2>/dev/null
+      ;;
+    ctrl-r)
+      [[ ! -f "${BMUX_DIR}"/"${session_name}" ]] \
+        && echo "Restart failed because the target session is unmanaged session" \
+        && exit 1
+      tmux kill-session -t "${session_name}" 2>/dev/null
+      "${BMUX_DIR}"/"${session_name}"
+      exit $?
+      ;;
+  esac
+}
+
+while [[ "$#" -gt 0 ]]; do
+  case "$1" in
+    -a|--all)
       session_type="all"
       ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
     *)
-      echo "Invalid option $OPTARG" 1>&2
+      echo "Invalid option: $1" >&2
+      usage
       exit 1
       ;;
   esac
@@ -24,7 +66,7 @@ while IFS= read -r line; do
   else
     sessions+=("- ${esc}[37m${line}${esc}[m")
   fi
-done < <(find -s "${BMUX_DIR}" -type f -print0 | xargs -0 -I __ basename __ .yml)
+done < <(find -s "${BMUX_DIR}" -type f -exec basename {} +)
 
 [[ "${session_type}" == 'all' ]] && \
   while IFS= read -r line; do
@@ -35,18 +77,18 @@ done < <(find -s "${BMUX_DIR}" -type f -print0 | xargs -0 -I __ basename __ .yml
 selected_sessions=$(
   IFS=$'\n'
   echo "${sessions[*]}" \
-    | fzf --ansi --exit-0 --expect=ctrl-e
+    | fzf --ansi --exit-0 --expect=ctrl-e,ctrl-d,ctrl-r
 )
 
-key=$(echo "${selected_sessions}" | head -1)
-selected_sessions=$(echo "${selected_sessions}" | sed 1d)
+key=$(head -1 <<< "${selected_sessions}")
+selected_sessions=$(sed 1d <<< "${selected_sessions}")
 [[ -z "${selected_sessions}" ]] && exit 1
 
 # shellcheck disable=SC2046
 read -r session_status session_name <<< $(echo "${selected_sessions}" | awk '{print $1 " " $2}')
 
-if [[ -n "${key}" && "${key}" == 'ctrl-e' ]]; then
-  exec nvim "${BMUX_DIR}/${session_name}"
+if [[ -n "${key}" ]]; then
+  handle_key "${key}" "${session_name}"
 fi
 
 [[ "${session_status}" == '-' ]] && "${BMUX_DIR}"/"${session_name}"
