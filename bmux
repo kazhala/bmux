@@ -45,6 +45,7 @@ while [[ "$#" -gt 0 ]]; do
   case "$1" in
     -a|--all)
       session_type="all"
+      shift
       ;;
     -h|--help)
       usage
