@@ -67,7 +67,7 @@ while IFS= read -r line; do
   else
     sessions+=("- ${esc}[37m${line}${esc}[m")
   fi
-done < <(find -s "${BMUX_DIR}" -type f -exec basename {} +)
+done < <(find "${BMUX_DIR}" -type f -print0 | sort -z | xargs -I __ -0 basename __)
 
 [[ "${session_type}" == 'all' ]] && \
   while IFS= read -r line; do
