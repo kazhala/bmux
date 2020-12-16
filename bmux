@@ -7,7 +7,7 @@ session_type="bmux"
 function usage() {
   echo -e "usage: bmux [-h] [-a] ...
 
-A minimulistic tmux session manager.
+A minimalistic tmux session manager.
 
 optional arguments:
   -h, --help\t\tshow this help message and exit
@@ -94,5 +94,9 @@ fi
 
 [[ "${session_status}" == '-' ]] && "${BMUX_DIR}"/"${session_name}"
 
-tmux switch-client -t "${session_name}" 2>/dev/null || \
+if [[ -n "${TMUX}"]]; then
+  tmux switch-client -t "${session_name}" 2>/dev/null || \
+    tmux attach -t "${session_name}"
+else
   tmux attach -t "${session_name}"
+fi
