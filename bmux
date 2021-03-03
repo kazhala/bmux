@@ -65,7 +65,7 @@ while IFS= read -r line; do
   if grep "${line}" <(tmux list-sessions 2>/dev/null | awk -F ':' '{print $1}') &>/dev/null; then
     sessions+=("+ ${esc}[35m${line}${esc}[m")
   else
-    sessions+=("- ${esc}[37m${line}${esc}[m")
+    sessions+=("- ${line}")
   fi
 done < <(find "${BMUX_DIR}" -type f -print0 | sort -z | xargs -I __ -0 basename __)
 
