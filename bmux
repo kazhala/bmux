@@ -7,8 +7,6 @@ BMUX_ACTIVE_COLOR="35"
 BMUX_INACTIVE_COLOR="39"
 BMUX_UNMANAGED_COLOR="33"
 
-session_type="bmux"
-
 function usage() {
 	echo -e "usage: bmux [-h] [-a] ...
 
@@ -46,6 +44,7 @@ function handle_key() {
 	esac
 }
 
+session_type="bmux"
 while [[ "$#" -gt 0 ]]; do
 	case "$1" in
 	-a | --all)
