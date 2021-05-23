@@ -46,10 +46,9 @@ function cmd() {
 
 function layout() {
 	local window=$1
-	local pane=$2
-	local layout=$3
+	local layout=$2
 
-	tmux select-layout -t "${BMUX_SESSION_NAME}:${window}.${pane}" "$layout"
+	tmux select-layout -t "${BMUX_SESSION_NAME}:${window}.1" "${layout}"
 }
 
 function focus() {
