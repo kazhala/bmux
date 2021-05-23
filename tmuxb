@@ -13,8 +13,8 @@ function window() {
 	local name="$2"
 	local filepath="$3"
 
-	if [[ "${id}" == "1" ]] && [[ -n "${name}" ]]; then
-		tmux rename-window -t "${BMUX_SESSION_NAME}:1"
+	if [[ "${id}" -eq 1 ]] && [[ -n "${name}" ]]; then
+		tmux rename-window -t "${BMUX_SESSION_NAME}:1" "${name}"
 	else
 		tmux new-window -t "${BMUX_SESSION_NAME}:${id}" -n "${name}"
 	fi
