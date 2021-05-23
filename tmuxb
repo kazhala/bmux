@@ -1,0 +1,83 @@
+#!/bin/bash
+
+[[ -z "${BMUX_SESSION_NAME}" ]] &&
+	echo "ENV BMUX_SESSION_NAME not set." >&2 &&
+	exit 1
+
+function session() {
+	tmux new -s "${BMUX_SESSION_NAME}" -d
+}
+
+function window() {
+	local id=$1
+	local name="$2"
+	local filepath="$3"
+
+	if [[ "${id}" == "1" ]] && [[ -n "${name}" ]]; then
+		tmux rename-window -t "${BMUX_SESSION_NAME}:1"
+	else
+		tmux new-window -t "${BMUX_SESSION_NAME}:${id}" -n "${name}"
+	fi
+
+	[[ -n "${filepath}" ]] && [[ -d "${filepath}" ]] &&
+		tmux send-keys -t "${BMUX_SESSION_NAME}:${id}.1" "cd ${filepath}; clear" ENTER
+}
+
+function pane() {
+	local window=$1
+	local pane=$2
+	local direction=$3
+	local filepath=$4
+
+	# shellcheck disable=SC2164
+	[[ -n "${filepath}" ]] && [[ -d "${filepath}" ]] &&
+		cd "${filepath}"
+
+	tmux split-window -t "${BMUX_SESSION_NAME}:${window}.${pane}" "${direction}"
+}
+
+function cmd() {
+	local window=$1
+	local pane=$2
+	local cmd=$3
+
+	tmux send-keys -t "${BMUX_SESSION_NAME}:${window}.${pane}" "${cmd}" ENTER
+}
+
+function layout() {
+	local window=$1
+	local pane=$2
+	local layout=$3
+
+	tmux select-layout -t "${BMUX_SESSION_NAME}:${window}.${pane}" "$layout"
+}
+
+function focus() {
+	for window in $(tmux list-windows -t "${BMUX_SESSION_NAME}" | awk -F ":" '{print $1}'); do
+		tmux select-pane -t "${BMUX_SESSION_NAME}:${window}.1"
+	done
+	tmux select-window -t "${BMUX_SESSION_NAME}:1"
+}
+
+case "$1" in
+session)
+	shift
+	session
+	;;
+window)
+	shift
+	window "$@"
+	;;
+focus)
+	shift
+	focus
+	;;
+pane)
+	shift
+	pane "$@"
+	;;
+cmd)
+	shift
+	cmd "$@"
+	;;
+esac
