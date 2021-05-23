@@ -41,14 +41,7 @@ function cmd() {
 	local pane=$2
 	local cmd=$3
 
-	tmux send-keys -t "${BMUX_SESSION_NAME}:${window}.${pane}" "${cmd}" ENTER
-}
-
-function layout() {
-	local window=$1
-	local layout=$2
-
-	tmux select-layout -t "${BMUX_SESSION_NAME}:${window}.1" "${layout}"
+	tmux send-keys -t "${BMUX_SESSION_NAME}:${window}.${pane}" "${cmd}; clear" ENTER
 }
 
 function focus() {
