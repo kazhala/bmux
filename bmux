@@ -1,11 +1,16 @@
 #!/bin/bash
 
 BMUX_DIR="${BMUX_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/bmux}"
+BMUX_ACTIVE_SYMBOL="+"
+BMUX_INACTIVE_SYMBOL="-"
+BMUX_ACTIVE_COLOR="35"
+BMUX_INACTIVE_COLOR="39"
+BMUX_UNMANAGED_COLOR="33"
 
 session_type="bmux"
 
 function usage() {
-  echo -e "usage: bmux [-h] [-a] ...
+	echo -e "usage: bmux [-h] [-a] ...
 
 A minimalistic tmux session manager.
 
@@ -21,82 +26,80 @@ optional arguments:
 #   $2: selected session information
 #######################################
 function handle_key() {
-  local key="$1"
-  local session_name="$2"
-  case "${key}" in
-    ctrl-e)
-      exec nvim "${BMUX_DIR}/${session_name}"
-      ;;
-    ctrl-d)
-      exec tmux kill-session -t "${session_name}" 2>/dev/null
-      ;;
-    ctrl-r)
-      [[ ! -f "${BMUX_DIR}"/"${session_name}" ]] \
-        && echo "Restart failed because the target session is unmanaged session" \
-        && exit 1
-      tmux kill-session -t "${session_name}" 2>/dev/null
-      "${BMUX_DIR}"/"${session_name}"
-      exit $?
-      ;;
-  esac
+	local key="$1"
+	local session_name="$2"
+	case "${key}" in
+	ctrl-e)
+		exec nvim "${BMUX_DIR}/${session_name}"
+		;;
+	ctrl-d)
+		exec tmux kill-session -t "${session_name}" 2>/dev/null
+		;;
+	ctrl-r)
+		[[ ! -f "${BMUX_DIR}"/"${session_name}" ]] &&
+			echo "Restart failed because the target session is unmanaged session" &&
+			exit 1
+		tmux kill-session -t "${session_name}" 2>/dev/null
+		"${BMUX_DIR}"/"${session_name}"
+		exit $?
+		;;
+	esac
 }
 
 while [[ "$#" -gt 0 ]]; do
-  case "$1" in
-    -a|--all)
-      session_type="all"
-      shift
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    *)
-      echo "Invalid option: $1" >&2
-      usage
-      exit 1
-      ;;
-  esac
+	case "$1" in
+	-a | --all)
+		session_type="all"
+		shift
+		;;
+	-h | --help)
+		usage
+		exit 0
+		;;
+	*)
+		echo "Invalid option: $1" >&2
+		usage
+		exit 1
+		;;
+	esac
 done
 
 sessions=()
 esc=$(printf '\033')
 while IFS= read -r line; do
-  if grep "${line}" <(tmux list-sessions 2>/dev/null | awk -F ':' '{print $1}') &>/dev/null; then
-    sessions+=("+ ${esc}[35m${line}${esc}[m")
-  else
-    sessions+=("- ${line}")
-  fi
+	if grep "${line}" <(tmux list-sessions 2>/dev/null | awk -F ':' '{print $1}') &>/dev/null; then
+		sessions+=("${esc}[${BMUX_ACTIVE_COLOR}m${BMUX_ACTIVE_SYMBOL} ${line}${esc}[m")
+	else
+		sessions+=("${esc}[${BMUX_INACTIVE_COLOR}m${BMUX_INACTIVE_SYMBOL} ${line}${esc}[m")
+	fi
 done < <(find "${BMUX_DIR}" -type f -print0 | sort -z | xargs -I __ -0 basename __)
 
-[[ "${session_type}" == 'all' ]] && \
-  while IFS= read -r line; do
-    [[ ! "${sessions[*]}" =~ ${line} ]] && \
-      sessions+=("+ ${esc}[33m${line}${esc}[m")
-  done < <(tmux list-sessions 2>/dev/null | awk -F ':' '{print $1}')
+[[ "${session_type}" == 'all' ]] &&
+	while IFS= read -r line; do
+		[[ ! "${sessions[*]}" =~ ${line} ]] &&
+			sessions+=("${esc}[${BMUX_UNMANAGED_COLOR}m${BMUX_ACTIVE_SYMBOL} ${line}${esc}[m")
+	done < <(tmux list-sessions 2>/dev/null | awk -F ':' '{print $1}')
 
 selected_sessions=$(
-  IFS=$'\n'
-  echo "${sessions[*]}" \
-    | fzf --ansi --exit-0 --expect=ctrl-e,ctrl-d,ctrl-r
+	IFS=$'\n'
+	echo "${sessions[*]}" |
+		fzf --ansi --exit-0 --expect=ctrl-e,ctrl-d,ctrl-r
 )
 
-key=$(head -1 <<< "${selected_sessions}")
-selected_sessions=$(sed 1d <<< "${selected_sessions}")
+key=$(head -1 <<<"${selected_sessions}")
+selected_sessions=$(sed 1d <<<"${selected_sessions}")
 [[ -z "${selected_sessions}" ]] && exit 1
 
-# shellcheck disable=SC2046
-read -r session_status session_name <<< $(echo "${selected_sessions}" | awk '{print $1 " " $2}')
+read -r session_status session_name <<<"$(echo "${selected_sessions}" | awk '{print $1 " " $2}')"
 
 if [[ -n "${key}" ]]; then
-  handle_key "${key}" "${session_name}"
+	handle_key "${key}" "${session_name}"
 fi
 
-[[ "${session_status}" == '-' ]] && "${BMUX_DIR}"/"${session_name}"
+[[ "${session_status}" == "${BMUX_INACTIVE_SYMBOL}" ]] && "${BMUX_DIR}"/"${session_name}"
 
 if [[ -n "${TMUX}" ]]; then
-  tmux switch-client -t "${session_name}" 2>/dev/null || \
-    tmux attach -t "${session_name}"
+	tmux switch-client -t "${session_name}" 2>/dev/null || tmux attach -t "${session_name}"
 else
-  tmux attach -t "${session_name}"
+	tmux attach -t "${session_name}"
 fi
