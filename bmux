@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+BMUX_PWD="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 BMUX_DIR="${BMUX_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/bmux}"
 BMUX_ACTIVE_SYMBOL="${BMUX_ACTIVE_SYMBOL:-+}"
@@ -82,7 +84,9 @@ done < <(find "${BMUX_DIR}" -type f -print0 | sort -z | xargs -I __ -0 basename 
 selected_sessions=$(
 	IFS=$'\n'
 	echo "${sessions[*]}" |
-		fzf --ansi --exit-0 --expect=ctrl-e,ctrl-d,ctrl-r
+		fzf --ansi --exit-0 --expect=ctrl-e,ctrl-d,ctrl-r --preview="echo {} \
+		| awk '{print \$2}' \
+		| xargs -I __ ${BMUX_PWD}/tmux_tree __"
 )
 
 key=$(head -1 <<<"${selected_sessions}")

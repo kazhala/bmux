@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 [[ -z "${BMUX_SESSION_NAME}" ]] &&
 	echo "ENV BMUX_SESSION_NAME not set." >&2 &&
