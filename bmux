@@ -86,7 +86,7 @@ selected_session=$(
 	echo "${sessions[*]}" |
 		fzf --ansi --exit-0 --expect=ctrl-e,ctrl-d,ctrl-r --preview="echo {} \
 		| awk '{print \$2}' \
-		| xargs -I __ ${BMUX_PWD}/tmux_tree __"
+		| xargs -I __ ${BMUX_PWD}/bmux_tree __"
 )
 
 key=$(head -1 <<<"${selected_session}")
