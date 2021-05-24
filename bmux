@@ -81,7 +81,7 @@ done < <(find "${BMUX_DIR}" -type f -print0 | sort -z | xargs -I __ -0 basename 
 			sessions+=("${esc}[${BMUX_UNMANAGED_COLOR}m${BMUX_ACTIVE_SYMBOL} ${line}${esc}[m")
 	done < <(tmux list-sessions 2>/dev/null | awk -F ':' '{print $1}')
 
-selected_sessions=$(
+selected_session=$(
 	IFS=$'\n'
 	echo "${sessions[*]}" |
 		fzf --ansi --exit-0 --expect=ctrl-e,ctrl-d,ctrl-r --preview="echo {} \
@@ -89,11 +89,11 @@ selected_sessions=$(
 		| xargs -I __ ${BMUX_PWD}/tmux_tree __"
 )
 
-key=$(head -1 <<<"${selected_sessions}")
-selected_sessions=$(sed 1d <<<"${selected_sessions}")
-[[ -z "${selected_sessions}" ]] && exit 1
+key=$(head -1 <<<"${selected_session}")
+selected_session=$(sed 1d <<<"${selected_session}")
+[[ -z "${selected_session}" ]] && exit 1
 
-read -r session_status session_name <<<"$(echo "${selected_sessions}" | awk '{print $1 " " $2}')"
+read -r session_status session_name <<<"$(echo "${selected_session}" | awk '{print $1 " " $2}')"
 
 if [[ -n "${key}" ]]; then
 	handle_key "${key}" "${session_name}"
