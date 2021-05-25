@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# source: https://github.com/petobens/dotfiles/commit/c21c306660142d93d283186210ad9d301a2f5186
 
 tmux ls -F'#{session_id}' | while read -r s; do
 	S=$(tmux ls -F'#{session_id}#{session_name}: #{T:tree_mode_format}' | grep ^"$s")
@@ -11,6 +12,6 @@ tmux ls -F'#{session_id}' | while read -r s; do
 	fi
 	tmux lsw -t"$s" -F'#{window_id}' | while read -r w; do
 		W=$(tmux lsw -t"$s" -F'#{window_id}#{T:tree_mode_format}' | grep ^"$w")
-		echo "  ﬌ ${W##$w}"
+		echo "  ${BMUX_TREE_SYMBOL} ${W##$w}"
 	done
 done

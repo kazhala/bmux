@@ -11,6 +11,7 @@ BMUX_UNMANAGED_COLOR="${BMUX_UNMANAGED_COLOR:-33}"
 
 export BMUX_TREE_ACTIVE_COLOR="${BMUX_TREE_ACTIVE_COLOR:-34}"
 export BMUX_TREE_INACTIVE_COLOR="${BMUX_TREE_INACTIVE_COLOR:-39}"
+export BMUX_TREE_SYMBOL="${BMUX_TREE_SYMBOL:-└─>}"
 
 function usage() {
 	echo -e "usage: bmux [-h] [-a] ...
