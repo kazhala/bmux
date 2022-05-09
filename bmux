@@ -77,7 +77,7 @@ while IFS= read -r line; do
 	else
 		sessions+=("${esc}[${BMUX_INACTIVE_COLOR}m${BMUX_INACTIVE_SYMBOL} ${line}${esc}[m")
 	fi
-done < <(find "${BMUX_DIR}" -type f -print0 | sort -z | xargs -I __ -0 basename __)
+done < <(find "${BMUX_DIR}" \( -type f -o -type l \) -print0 | sort -z | xargs -I __ -0 basename __)
 
 [[ "${session_type}" == 'all' ]] &&
 	while IFS= read -r line; do
